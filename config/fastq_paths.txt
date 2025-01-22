@@ -1,0 +1,2 @@
+sample_id,file_path
+test,/nfs/turbo/umms-indikar/shared/projects/hybrid_reprogramming/data/fastq/gene_expression/merged_reads/run2.fastq.gz

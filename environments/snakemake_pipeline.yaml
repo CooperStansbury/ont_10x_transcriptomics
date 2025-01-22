@@ -1,0 +1,10 @@
+name: snakemake_pipeline
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.12  # Pinning Python version for clarity
+  - snakemake=7.32.0  # The core package
+  - pandas
+  - numpy<2.0  # Pin numpy to versions less than 2.0

@@ -1,0 +1,11 @@
+output_path: "/scratch/indikar_root/indikar1/shared_data/ont_10x_pipeline_test/"
+
+inputs: "config/fastq_paths.txt"
+reference:
+    fasta: "/path/to/your/genome.fa"  
+    annotation: "/path/to/your/genes.gtf" 
+
+# Nested parameters
+alignment_params:
+  min_identity: 0.9 
+  max_gap_open: 5  
