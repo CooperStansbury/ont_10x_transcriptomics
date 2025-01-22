@@ -19,14 +19,61 @@ def log(message):
     print(f"{timestamp} - {message}")
 
 
-def get_basename(filepath):
+def check_consistent_extensions(basenames):
   """
-  Returns the basename of a file, even if it has multiple periods.
+  Checks if a list of basenames have consistent extensions.
 
   Args:
-    filepath: The path to the file.
+    basenames: A list of file basenames (e.g., ["file1.txt", "file2.txt.gz"]).
 
   Returns:
-    The basename of the file.
+    The consistent extension (including any leading periods) if found.
+
+  Raises:
+    ValueError: If the extensions are not consistent or if no files are provided.
   """
-  return os.path.splitext(os.path.basename(filepath))[0]
+  if not basenames:
+    raise ValueError("No basenames provided.")
+
+  extensions = []
+  for basename in basenames:
+    parts = basename.split(".")
+    if len(parts) > 2 and parts[-2] == "fastq" and parts[-1] == "gz":
+      extensions.append(".fastq.gz")
+    else:
+      extensions.append(os.path.splitext(basename)[1])
+
+  extensions_set = set(extensions)
+  if len(extensions_set) > 1:
+    raise ValueError(f"Inconsistent extensions found: {', '.join(extensions_set)}")
+
+  return extensions_set.pop()
+
+
+def get_output_filenames(input_df, output_path):
+  """
+  Generates output filenames by combining sample IDs from an input DataFrame 
+  with a consistent file extension and the output directory path.
+
+  Args:
+    input_df: A pandas DataFrame with 'sample_id' and 'file_path' columns.
+    output_path: The directory where output files will be written.
+
+  Returns:
+    A list of complete output filenames (including the output path and extension).
+
+  Raises:
+    ValueError: If the 'file_path' column contains inconsistent extensions.
+  """
+  output_names = input_df['sample_id'].to_list()
+  basenames = input_df['file_path'].apply(os.path.basename).to_list()
+  extension = check_consistent_extensions(basenames)
+
+  output_names = [f"{output_path}fastq/{x}{extension}" for x in output_names]
+  return output_names
+    
+    
+    
+    
+    
+    

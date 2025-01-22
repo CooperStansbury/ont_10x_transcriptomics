@@ -42,37 +42,28 @@ INPUT_BASENAME = os.path.basename(INPUT_ABS_PATH)
 input_df = pd.read_csv(INPUT_ABS_PATH, comment="#")
 samples = input_df['sample_id'].to_list()
 
-print(f"\n{pu.HEADER_STR} FEATURE VALUES {pu.HEADER_STR}")
-print(tabulate.tabulate(
-    input_df, 
-    headers='keys', 
-    tablefmt='plain',
-    showindex=False,)
-)
+# get new path names
+input_file_paths = input_df['file_path'].to_list()
+output_file_paths = pu.get_output_filenames(input_df, OUTPUT_PATH)
+
+print(f"\n{pu.HEADER_STR} INPUT FILES {pu.HEADER_STR}")
+for _, row in input_df.iterrows():
+    fbasename = os.path.basename(row['file_path'])
+    print(f"{row['sample_id']}: {fbasename} ({row['file_path']})")
+
+
+""" RULE FILES """
+include: "rules/gather.smk"
+include: "rules/pipeline-core.smk"
+
 
 rule all:
     input:
         OUTPUT_PATH + "config/" + CONFIG_BASENAME,
         OUTPUT_PATH + "config/" + INPUT_BASENAME,
+        OUTPUT_PATH + 'references/genome_build.txt',
+        OUTPUT_PATH + 'references/reference.mmi',
+        output_file_paths,
 
-
-rule get_config:
-    input:
-        CONFIG_ABS_PATH
-    output:
-        OUTPUT_PATH + "config/" + CONFIG_BASENAME,
-    shell:
-        """ cp {input} {output} """
-
-
-rule get_input_list:
-    input:
-        INPUT_ABS_PATH
-    output:
-        OUTPUT_PATH + "config/" + INPUT_BASENAME,
-    shell:
-        """ cp {input} {output} """
-    
-        
 
 
