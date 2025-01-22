@@ -37,7 +37,7 @@ print(json.dumps(config, indent=4))
 OUTPUT_PATH = config['output_path']
 
 """ LOAD INPUTS """
-INPUT_ABS_PATH = os.path.abspath(config['inputs'])
+INPUT_ABS_PATH = os.path.abspath(config['inputs']['fastq_file_paths'])
 INPUT_BASENAME = os.path.basename(INPUT_ABS_PATH)
 input_df = pd.read_csv(INPUT_ABS_PATH, comment="#")
 samples = input_df['sample_id'].to_list()
@@ -45,6 +45,7 @@ samples = input_df['sample_id'].to_list()
 # get new path names
 input_file_paths = input_df['file_path'].to_list()
 output_file_paths = pu.get_output_filenames(input_df, OUTPUT_PATH)
+extension = pu.check_consistent_extensions(input_file_paths)
 
 print(f"\n{pu.HEADER_STR} INPUT FILES {pu.HEADER_STR}")
 for _, row in input_df.iterrows():
@@ -63,7 +64,12 @@ rule all:
         OUTPUT_PATH + "config/" + INPUT_BASENAME,
         OUTPUT_PATH + 'references/genome_build.txt',
         OUTPUT_PATH + 'references/reference.mmi',
+        OUTPUT_PATH + "references/barcode_whitelist.txt",
         output_file_paths,
+        expand(OUTPUT_PATH + "demultiplex/{sid}.done", sid=samples),
+        OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
+        OUTPUT_PATH + 'reports/seqkit_stats/demultiplexed_fastq_report.txt',
+        expand(OUTPUT_PATH + "mapping/{sid}.tagged.bam.bai", sid=samples),
 
 
 

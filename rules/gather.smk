@@ -59,11 +59,23 @@ rule get_reference:
     Copies the reference genome to the references directory.
     """
     input:
-        refgenome=config['reference']['fasta'],
+        refgenome=config['inputs']['reference_fasta'],
     output:
         OUTPUT_PATH + 'references/reference.fa.gz'
     shell:
         "cp {input} {output}"
+
+
+rule get_whitelist:
+    """
+    Copy the barcode whitelist file to the references directory.
+    """
+    input:
+        config['demux']['barcode_whitelist']
+    output:
+        OUTPUT_PATH + "references/barcode_whitelist.txt",
+    shell:
+        """ cp {input} {output} """
 
 
 rule get_genome_build:
@@ -82,14 +94,12 @@ rule get_genome_build:
         grep "^#!" {input} > {output}
         """
 
-
-
 rule get_annotations:
     """
     Copies the annotation file to the references directory.
     """
     input:
-        config['reference']['annotation'],
+        config['inputs']['reference_annotation'],
     output:
         OUTPUT_PATH + 'references/annotations.gtf'
     shell:

@@ -1,10 +1,21 @@
+# general 
 threads: 36
 output_path: "/scratch/indikar_root/indikar1/shared_data/ont_10x_pipeline_test/"
 
-inputs: "config/fastq_paths.txt"
-reference:
-    fasta: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa"  
-    annotation: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf" 
+# input files
+inputs:
+    fastq_file_paths: "config/fastq_paths.txt"
+    reference_fasta: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa"  
+    reference_annotation: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf" 
+
+# demultiplexing parameters
+demux:
+    expected_cells: 10000
+    barcode_whitelist: "/nfs/turbo/umms-indikar/shared/projects/cell_cycle/data/10x_barcode_lists/3M-3pgex-may-2023.txt"
+
+# minimap2 alignment parameters
+minimap2_params: "-ax splice -uf --secondary=no --MD" 
+    
 
 # Nested parameters
 alignment_params:
