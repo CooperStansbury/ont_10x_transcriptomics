@@ -1,36 +1,17 @@
-# Snakemake Pipeline Configuration
+# Pipeline Configuration
 
-This directory contains configuration files used to set up and run a Snakemake pipeline. The configuration files specify parameters, input/output paths, and execution settings required for different stages of the workflow.
+This directory contains configuration files for setting up and running a Snakemake pipeline. These files define essential parameters, input/output paths, and execution settings for different stages of the workflow.
 
 ## Overview
 
-- `config.yaml` – Main configuration file with key parameters for the pipeline.
+The following configuration files are included:
+
+- **`config.yaml`** – Main configuration file specifying pipeline parameters, input/output locations, and reference genome details.
+- **`fastq_paths.txt`** – Lists sample IDs and their corresponding FASTQ file paths for processing.
+
+## Configuration Details
+
+The `config.yaml` file includes settings for:
 
 
-## Config
-
-This YAML configuration file provides settings for running the pipeline, including resource allocation, input files, and reference genome information.
-
-### Parameters
-
-- **Threads:** `36`  
-  Number of threads to be used for processing.
-
-- **Output Path:**  
-  `/scratch/indikar_root/indikar1/shared_data/ont_10x_pipeline_test/`  
-  Directory where pipeline outputs will be stored.
-
-- **FASTQ Paths:**  
-  `config/fastq_paths.txt`  
-  Path to the text file containing a list of input FASTQ files.
-
-- **FASTA File:**  
-  `/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa`  
-  Reference genome sequence in FASTA format. Expects UNZIPPED `.fa` file.
-
-- **Annotation File:**  
-  `/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf`  
-  Gene annotation file in GTF format. Expects UNZIPPED `.gtf` file.
-
-
-
+TODO
