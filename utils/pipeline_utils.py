@@ -17,3 +17,16 @@ def log(message):
     """Prints a timestamped message to the console."""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{timestamp} - {message}")
+
+
+def get_basename(filepath):
+  """
+  Returns the basename of a file, even if it has multiple periods.
+
+  Args:
+    filepath: The path to the file.
+
+  Returns:
+    The basename of the file.
+  """
+  return os.path.splitext(os.path.basename(filepath))[0]

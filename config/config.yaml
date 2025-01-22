@@ -1,9 +1,10 @@
+threads: 36
 output_path: "/scratch/indikar_root/indikar1/shared_data/ont_10x_pipeline_test/"
 
 inputs: "config/fastq_paths.txt"
 reference:
-    fasta: "/path/to/your/genome.fa"  
-    annotation: "/path/to/your/genes.gtf" 
+    fasta: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa"  
+    annotation: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf" 
 
 # Nested parameters
 alignment_params:

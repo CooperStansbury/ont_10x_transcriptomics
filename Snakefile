@@ -36,7 +36,6 @@ print(json.dumps(config, indent=4))
 """ HELPER VARIABLES """
 OUTPUT_PATH = config['output_path']
 
-
 """ LOAD INPUTS """
 INPUT_ABS_PATH = os.path.abspath(config['inputs'])
 INPUT_BASENAME = os.path.basename(INPUT_ABS_PATH)
@@ -44,16 +43,12 @@ input_df = pd.read_csv(INPUT_ABS_PATH, comment="#")
 samples = input_df['sample_id'].to_list()
 
 print(f"\n{pu.HEADER_STR} FEATURE VALUES {pu.HEADER_STR}")
-
-print(
-    tabulate.tabulate(
-        input_df, 
-        headers='keys', 
-        tablefmt='plain',
-        showindex=False,
-    )
+print(tabulate.tabulate(
+    input_df, 
+    headers='keys', 
+    tablefmt='plain',
+    showindex=False,)
 )
-
 
 rule all:
     input:

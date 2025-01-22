@@ -1,4 +1,4 @@
-name: snakemake_pipeline
+name: workflow-env
 channels:
   - conda-forge
   - bioconda
