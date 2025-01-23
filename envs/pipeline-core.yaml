@@ -4,6 +4,8 @@ channels:
   - bioconda
   - defaults
 dependencies:
+  - scanpy 
+  - anndata
   - minimap2
   - pysam
   - samtools

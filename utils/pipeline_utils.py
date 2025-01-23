@@ -73,7 +73,7 @@ def get_output_filenames(input_df, output_path):
   return output_names
 
 
-def read_names(names_file):
+def get_names(names_file):
     """
     Reads a file containing names, one per line.
 

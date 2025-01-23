@@ -18,8 +18,5 @@ alignment:
     minimap2_params: "-ax splice -uf --secondary=no --MD" 
     mapq_threshold: 1
     
-
-# Nested parameters
-alignment_params:
-  min_identity: 0.9 
-  max_gap_open: 5  
+counts:
+    umi_distance: 1

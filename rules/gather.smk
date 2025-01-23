@@ -126,24 +126,22 @@ rule get_chroms:
         cut -f 1 {input.gtf} | grep -v '^#' | sort -u | grep -v '\.' > {output.chroms}
         """
 
+""" DEFINE THE CHROMOSOMES """
+chromosomes = pu.get_names(rules.get_chroms.output[0])
 
-# Define the rule to split the GTF file
-rule split_gtf:
+
+rule create_chromosome_gtf:
+    """
+    This rule extracts GTF entries for a specific chromosome from the main
+    annotations.gtf file and creates a chromosome-specific GTF file.
+    """
     input:
-        gtf=OUTPUT_PATH + 'references/annotations.gtf',
-        chroms=OUTPUT_PATH + 'references/chroms.txt',
+        gtf=OUTPUT_PATH + "references/annotations.gtf",
+    params:
+        chrom=lambda wildcards: wildcards.chrom
     output:
-        OUTPUT_PATH + "references/by_chromosome/{chrom}.gtf",
-    run:
-        # Read the list of chroms
-        with open(input.chroms) as f:
-            chroms = f.read().splitlines()
-
-        # Read the GTF file into a pandas DataFrame
-        df = pd.read_csv(input.gtf, sep="\t", header=None, comment="#", low_memory=False)
-
-        # Iterate over the chroms and split the GTF file
-        for chromosome in chroms:
-            df_chr = df[df[0] == chromosome]
-            df_chr.to_csv(output[0].format(chromosome=chromosome), sep="\t", header=False, index=False)
-
+        OUTPUT_PATH + "references/by_chrom/{chrom}.gtf"
+    shell:
+        """
+        grep "^{params.chrom}\s" {input.gtf} > {output}
+        """

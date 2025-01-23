@@ -53,6 +53,13 @@ for _, row in input_df.iterrows():
     print(f"{row['sample_id']}: {fbasename} ({row['file_path']})")
 
 
+
+""" HELPER FUNCTIONS """""
+def get_chromosomes(wildcards):
+    with open(wildcards.chroms_file, "r") as f:
+        return [line.strip() for line in f]
+
+
 """ RULE FILES """
 include: "rules/gather.smk"
 include: "rules/pipeline-core.smk"
@@ -71,8 +78,10 @@ rule all:
         OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
         OUTPUT_PATH + 'reports/seqkit_stats/demultiplexed_fastq_report.txt',
         expand(OUTPUT_PATH + "mapping/{sid}.tagged.bam", sid=samples),
-        # expand(OUTPUT_PATH + "references/by_chromosome/{chrom}.gtf", chrom=pu.read_names(OUTPUT_PATH + "references/chroms.txt")),
-        # expand(OUTPUT_PATH + "mapping/by_chromosome/{chrom}.bam", chrom=pu.read_names(OUTPUT_PATH + "references/chroms.txt")),
+        expand(OUTPUT_PATH + "references/by_chrom/{chrom}.gtf", chrom=chromosomes),
+        expand(OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam", chrom=chromosomes),
+        expand(OUTPUT_PATH + "counts/{chrom}.counts.h5ad", chrom=chromosomes),
+
 
 
 

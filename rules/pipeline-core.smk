@@ -140,46 +140,66 @@ rule tag_bam:
         """python scripts/tag_bam.py {input} {output.bam} {output.records}"""
 
 
-# rule samtools_index:
-#     """
-#     Index a BAM file using samtools.
-# 
-#     This rule creates a BAM index (.bai) file for a given BAM file using samtools. 
-#     The index allows for efficient random access to the BAM file.
-#     """
-#     input:
-#         OUTPUT_PATH + 'mapping/{sid}.tagged.bam'
-#     output:
-#         OUTPUT_PATH + 'mapping/{sid}.tagged.bam.bai'
-#     conda:
-#         "pipeline-core"
-#     wildcard_constraints:
-#         sid='|'.join([re.escape(x) for x in set(samples)]),
-#     threads:
-#         int(config['threads'])
-#     shell:
-#         """samtools index -@ {threads} {input}"""
-
 
 rule aggregate_reads_by_chromosome:
-    """Aggregate reads from multiple BAM files by chromosome."""
+    """
+    Aggregates reads from multiple BAM files into a single BAM file for each chromosome.
+
+    This rule takes a list of BAM files (typically one per sample) and merges them.
+    Then, it filters and sorts the merged reads by chromosome, producing one 
+    chromosome-specific, sorted BAM file, and its corresponding index.
+
+    The list of chromosomes to process is defined by the CHROMOSOMES variable
+    in the Snakefile.
+    """
     input:
-        bam_files=expand("data/bam/{sid}.bam", sid=samples),
-        chromosomes=OUTPUT_PATH + 'references/chromosomes.txt',
+        bam_files=expand(OUTPUT_PATH + 'mapping/{sid}.tagged.bam', sid=samples),
+    params:
+        chrom=lambda wc: wc.chrom
     output:
-        OUTPUT_PATH + "mapping/by_chromosome/{chrom}.bam"
+        bam=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam",
+        bai=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam.bai" # Add output for index
     conda:
         "pipeline-core"
-    wildcard_constraints:
-        sid='|'.join([re.escape(x) for x in set(samples)]),
     threads:
         int(config['threads'])
     shell:
         """
-        chromosomes=$(cat {input.chromosomes})
-        for chr in $chromosomes; do
-            samtools view -b -@ {threads} -h {input.bam_files} $chr | \
-            samtools sort -@ {threads} - -o {output[0].format(chrom=$chr)}
-            samtools index {output[0].format(chrom=$chr)}
-        done
+        samtools merge -@ {threads} - {input.bam_files} | \
+        samtools view -b -@ {threads} -h - | \
+        samtools sort -@ {threads} - -o {output.bam}
+        samtools index {output.bam} {output.bai}
         """
+
+
+rule htseq_count:
+    """
+    Counts reads overlapping genomic features (e.g., genes) using HTSeq-count,
+    processing each chromosome separately.
+
+    This rule takes a chromosome-specific BAM file and a corresponding GTF
+    file as input and produces a counts file using HTSeq-count with barcode
+    correction. The counts file lists the number of reads mapping to each
+    feature in the GTF file. This rule processes each chromosome independently
+    for improved parallelism.
+    """
+    input:
+        bam=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam",
+        annotations=OUTPUT_PATH + "references/by_chrom/{chrom}.gtf"
+    output:
+        OUTPUT_PATH + "counts/{chrom}.counts.h5ad"
+    conda:
+        "pipeline-core"
+    params:
+        d=lambda wc: int(config['counts']['umi_distance']),
+        chrom=lambda wc: wc.chrom
+    shell:
+        """
+        htseq-count-barcodes \
+            --nonunique all \
+            --correct-UMI-distance {params.d} \
+            --counts_output_sparse \
+            {input.bam} \
+            {input.annotations} -c {output}
+        """
+
