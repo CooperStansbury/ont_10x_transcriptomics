@@ -71,7 +71,20 @@ def get_output_filenames(input_df, output_path):
 
   output_names = [f"{output_path}fastq/{x}{extension}" for x in output_names]
   return output_names
-    
+
+
+def read_names(names_file):
+    """
+    Reads a file containing names, one per line.
+
+    Args:
+        names_file (str): Path to the file containing names.
+
+    Returns:
+        list: A list of names.
+    """
+    with open(names_file) as f:
+        return [line.strip() for line in f]
     
     
     

@@ -14,7 +14,9 @@ demux:
     barcode_whitelist: "/nfs/turbo/umms-indikar/shared/projects/cell_cycle/data/10x_barcode_lists/3M-3pgex-may-2023.txt"
 
 # minimap2 alignment parameters
-minimap2_params: "-ax splice -uf --secondary=no --MD" 
+alignment:
+    minimap2_params: "-ax splice -uf --secondary=no --MD" 
+    mapq_threshold: 1
     
 
 # Nested parameters

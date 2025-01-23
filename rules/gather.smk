@@ -78,6 +78,18 @@ rule get_whitelist:
         """ cp {input} {output} """
 
 
+rule get_annotations:
+    """
+    Copies the annotation file to the references directory.
+    """
+    input:
+        config['inputs']['reference_annotation'],
+    output:
+        OUTPUT_PATH + 'references/annotations.gtf'
+    shell:
+        "cp {input} {output}"
+
+
 rule get_genome_build:
     """
     Extracts all comment lines (starting with '#!') from a reference GTF file.
@@ -94,14 +106,44 @@ rule get_genome_build:
         grep "^#!" {input} > {output}
         """
 
-rule get_annotations:
+
+rule get_chroms:
     """
-    Copies the annotation file to the references directory.
+    Extracts unique chromosome names from a GTF file, excluding those with ".".
+
+    This is a hacky way to ignore unplaced contigs.
+
+    This rule uses command-line tools to identify and extract 
+    the unique chromosome names present in the input GTF file,
+    filtering out any chromosome names containing a period.
     """
     input:
-        config['inputs']['reference_annotation'],
+        gtf=OUTPUT_PATH + 'references/annotations.gtf'
     output:
-        OUTPUT_PATH + 'references/annotations.gtf'
+        chroms=OUTPUT_PATH + 'references/chroms.txt'
     shell:
-        "cp {input} {output}"
+        """
+        cut -f 1 {input.gtf} | grep -v '^#' | sort -u | grep -v '\.' > {output.chroms}
+        """
+
+
+# Define the rule to split the GTF file
+rule split_gtf:
+    input:
+        gtf=OUTPUT_PATH + 'references/annotations.gtf',
+        chroms=OUTPUT_PATH + 'references/chroms.txt',
+    output:
+        OUTPUT_PATH + "references/by_chromosome/{chrom}.gtf",
+    run:
+        # Read the list of chroms
+        with open(input.chroms) as f:
+            chroms = f.read().splitlines()
+
+        # Read the GTF file into a pandas DataFrame
+        df = pd.read_csv(input.gtf, sep="\t", header=None, comment="#", low_memory=False)
+
+        # Iterate over the chroms and split the GTF file
+        for chromosome in chroms:
+            df_chr = df[df[0] == chromosome]
+            df_chr.to_csv(output[0].format(chromosome=chromosome), sep="\t", header=False, index=False)
 

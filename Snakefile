@@ -63,13 +63,17 @@ rule all:
         OUTPUT_PATH + "config/" + CONFIG_BASENAME,
         OUTPUT_PATH + "config/" + INPUT_BASENAME,
         OUTPUT_PATH + 'references/genome_build.txt',
+        OUTPUT_PATH + 'references/chroms.txt',
         OUTPUT_PATH + 'references/reference.mmi',
         OUTPUT_PATH + "references/barcode_whitelist.txt",
         output_file_paths,
         expand(OUTPUT_PATH + "demultiplex/{sid}.done", sid=samples),
         OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
         OUTPUT_PATH + 'reports/seqkit_stats/demultiplexed_fastq_report.txt',
-        expand(OUTPUT_PATH + "mapping/{sid}.tagged.bam.bai", sid=samples),
+        expand(OUTPUT_PATH + "mapping/{sid}.tagged.bam", sid=samples),
+        # expand(OUTPUT_PATH + "references/by_chromosome/{chrom}.gtf", chrom=pu.read_names(OUTPUT_PATH + "references/chroms.txt")),
+        # expand(OUTPUT_PATH + "mapping/by_chromosome/{chrom}.bam", chrom=pu.read_names(OUTPUT_PATH + "references/chroms.txt")),
+
 
 
 

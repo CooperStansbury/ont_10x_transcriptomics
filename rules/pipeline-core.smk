@@ -87,19 +87,21 @@ rule demultiplexed_report:
 
 rule align_reads:
     """
-    Align demultiplexed reads to a reference genome using minimap2 and sort the output using samtools.
+    Align demultiplexed reads to a reference genome using minimap2, filter by mapping quality, and sort the output using samtools.
 
     This rule takes demultiplexed reads and aligns them to a reference genome using minimap2 with specified parameters. 
-    The resulting SAM output is then sorted and converted to BAM format using samtools.
+    The resulting SAM output is then filtered based on the provided mapping quality threshold using samtools view.
+    Finally, the filtered SAM output is sorted and converted to BAM format using samtools.
     """
     input:
         flag=OUTPUT_PATH + "demultiplex/{sid}.done",
         ref=OUTPUT_PATH + 'references/reference.fa.gz',
         refindex=OUTPUT_PATH + 'references/reference.mmi',
-    output:        
+    output:
         bam=OUTPUT_PATH + 'mapping/{sid}.bam',
     params:
-        args=config['minimap2_params'],
+        args=config['alignment']['minimap2_params'],
+        mapq=config['alignment']['mapq_threshold'],
         fastq=OUTPUT_PATH + "demultiplex/{sid}.matched_reads" + extension,
     threads:
         int(config['threads'])
@@ -110,9 +112,12 @@ rule align_reads:
     conda:
         "pipeline-core"
     shell:
-        """minimap2 {params.args} -t {threads} \
-        {input.ref} {params.fastq} | samtools sort \
-        -@ {threads} -O bam -o {output.bam} 2>&1 | tee {log}"""
+        """
+        minimap2 {params.args} -t {threads} \
+        {input.ref} {params.fastq} | \
+        samtools view -h -q {params.mapq} - | \
+        samtools sort -@ {threads} -O bam -o {output.bam} 2>&1 | tee {log}
+        """
 
 
 rule tag_bam:
@@ -135,17 +140,34 @@ rule tag_bam:
         """python scripts/tag_bam.py {input} {output.bam} {output.records}"""
 
 
-rule samtools_index:
-    """
-    Index a BAM file using samtools.
+# rule samtools_index:
+#     """
+#     Index a BAM file using samtools.
+# 
+#     This rule creates a BAM index (.bai) file for a given BAM file using samtools. 
+#     The index allows for efficient random access to the BAM file.
+#     """
+#     input:
+#         OUTPUT_PATH + 'mapping/{sid}.tagged.bam'
+#     output:
+#         OUTPUT_PATH + 'mapping/{sid}.tagged.bam.bai'
+#     conda:
+#         "pipeline-core"
+#     wildcard_constraints:
+#         sid='|'.join([re.escape(x) for x in set(samples)]),
+#     threads:
+#         int(config['threads'])
+#     shell:
+#         """samtools index -@ {threads} {input}"""
 
-    This rule creates a BAM index (.bai) file for a given BAM file using samtools. 
-    The index allows for efficient random access to the BAM file.
-    """
+
+rule aggregate_reads_by_chromosome:
+    """Aggregate reads from multiple BAM files by chromosome."""
     input:
-        OUTPUT_PATH + 'mapping/{sid}.tagged.bam'
+        bam_files=expand("data/bam/{sid}.bam", sid=samples),
+        chromosomes=OUTPUT_PATH + 'references/chromosomes.txt',
     output:
-        OUTPUT_PATH + 'mapping/{sid}.tagged.bam.bai'
+        OUTPUT_PATH + "mapping/by_chromosome/{chrom}.bam"
     conda:
         "pipeline-core"
     wildcard_constraints:
@@ -153,5 +175,11 @@ rule samtools_index:
     threads:
         int(config['threads'])
     shell:
-        """samtools index -@ {threads} {input}"""
-
+        """
+        chromosomes=$(cat {input.chromosomes})
+        for chr in $chromosomes; do
+            samtools view -b -@ {threads} -h {input.bam_files} $chr | \
+            samtools sort -@ {threads} - -o {output[0].format(chrom=$chr)}
+            samtools index {output[0].format(chrom=$chr)}
+        done
+        """
