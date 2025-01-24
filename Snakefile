@@ -71,6 +71,7 @@ rule all:
         OUTPUT_PATH + "config/" + INPUT_BASENAME,
         OUTPUT_PATH + 'references/genome_build.txt',
         OUTPUT_PATH + 'references/chroms.txt',
+        OUTPUT_PATH + 'references/gene_table.tsv',
         OUTPUT_PATH + 'references/reference.mmi',
         OUTPUT_PATH + "references/barcode_whitelist.txt",
         output_file_paths,

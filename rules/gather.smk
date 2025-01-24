@@ -90,6 +90,62 @@ rule get_annotations:
         "cp {input} {output}"
 
 
+rule get_gene_table:
+    """
+    Extracts gene information from a GTF file and creates a gene table,
+    excluding entries without a gene_name.
+
+    The output table contains the following columns:
+    - gene_id
+    - gene_name
+    - gene_biotype
+    - chrom
+    - start
+    - end
+    """
+    input:
+        OUTPUT_PATH + 'references/annotations.gtf',
+    output:
+        OUTPUT_PATH + 'references/gene_table.tsv',
+    shell:
+        """
+        awk '
+            BEGIN {{ FS = "\t" }}
+            {{
+                if ($3 == "gene") {{
+                    split($9, a, ";");
+                    gene_id = "";
+                    gene_name = "";
+                    gene_biotype = "";
+
+                    for (i in a) {{
+                        if (a[i] ~ /gene_id/) {{
+                            split(a[i], b, " ");
+                            gene_id = b[2];
+                        }}
+                        if (a[i] ~ /gene_name/) {{
+                            split(a[i], b, " ");
+                            gene_name = b[2];
+                        }}
+                        if (a[i] ~ /gene_biotype/) {{
+                            split(a[i], b, " ");
+                            gene_biotype = b[2];
+                        }}
+                    }}
+
+                    gsub(/"/, "", gene_id);
+                    gsub(/"/, "", gene_name);
+                    gsub(/"/, "", gene_biotype);
+
+                    if (gene_name != "") {{
+                        print gene_id "\t" gene_name "\t" gene_biotype "\t" $1 "\t" $4 "\t" $5
+                    }}
+                }}
+            }}
+        ' {input} | sed '1igene_id\tgene_name\tgene_biotype\tchrom\tstart\tend' > {output}
+        """
+
+
 rule get_genome_build:
     """
     Extracts all comment lines (starting with '#!') from a reference GTF file.
@@ -128,7 +184,6 @@ rule get_chroms:
 
 """ DEFINE THE CHROMOSOMES """
 chromosomes = pu.get_names(rules.get_chroms.output[0])
-
 
 rule create_chromosome_gtf:
     """
