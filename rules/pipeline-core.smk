@@ -14,24 +14,6 @@ rule minimap2_index:
         "minimap2 -t {threads} -d {output} {input}"
 
 
-rule raw_report:
-    """
-    Generates a summary report of key statistics for raw FASTQ files using seqkit.
-    """
-    input:
-        expand(OUTPUT_PATH + "fastq/{sid}" + extension, sid=samples),
-    output:
-        OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
-    wildcard_constraints:
-        sid='|'.join([re.escape(x) for x in set(samples)]),
-    threads:
-        config['threads'] // 4
-    conda:
-        "../envs/pipeline-core.yaml"
-    shell:
-        """seqkit stats -a -b -j {threads} {input} -o {output}"""
-
-
 rule demultiplex:
     """
     Demultiplexes FASTQ files based on cell barcodes.
@@ -62,26 +44,6 @@ rule demultiplex:
         """blaze --expect-cells {params.expected} \
         --output-prefix {params.output_prefix} --threads {threads} \
         --full-bc-whitelist {input.whitelist} {input.fastq} > {log}"""
-
-
-rule demultiplexed_report:
-    """
-    Generates a summary report of key statistics for demultiplexed FASTQ files using seqkit.
-    """
-    input:
-        flags=expand(OUTPUT_PATH + "demultiplex/{sid}.done", sid=samples),
-    output:
-        OUTPUT_PATH + "reports/seqkit_stats/demultiplexed_fastq_report.txt",
-    wildcard_constraints:
-        sid='|'.join([re.escape(x) for x in set(samples)]),
-    threads:
-        config['threads'] // 4
-    conda:
-        "../envs/pipeline-core.yaml"
-    params:
-        files=expand(OUTPUT_PATH + "demultiplex/{sid}.matched_reads" + extension, sid=samples),
-    shell:
-        """seqkit stats -a -b -j {threads} {params.files} -o {output}"""
 
 
 rule align_reads:
