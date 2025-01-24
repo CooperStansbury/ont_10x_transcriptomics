@@ -63,6 +63,7 @@ def get_chromosomes(wildcards):
 """ RULE FILES """
 include: "rules/gather.smk"
 include: "rules/pipeline-core.smk"
+include: "rules/qc.smk"
 
 
 rule all:
@@ -83,6 +84,7 @@ rule all:
         expand(OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam", chrom=chromosomes),
         expand(OUTPUT_PATH + "counts/{chrom}.counts.h5ad", chrom=chromosomes),
         OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
+        expand(OUTPUT_PATH + "qc/longqc/{sid}/summary.txt", sid=samples),
 
 
 
