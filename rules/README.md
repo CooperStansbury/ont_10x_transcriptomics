@@ -29,6 +29,15 @@ This stage processes your data:
 *   Counts reads overlapping genomic features (e.g., genes) using `HTSeq-count` for each chromosome.
 *   Compiles and annotates a single AnnData object from multiple chromosome-specific h5ad files, including gene filtering and sparse matrix conversion.
 
+### 3. Reporting (`reporting`)
+
+This stage generates quality control and summary reports:
+
+*   Runs `NanoQC` on FASTQ files to generate quality control reports.
+*   Generates sequencing statistics from FASTQ files using `NanoStat`.
+*   Creates summary reports of key statistics for raw and demultiplexed FASTQ files using `seqkit`.
+*   Generates alignment summary statistics using `samtools flagstat`.
+
 ## Output
 
 The workflow produces:
@@ -43,9 +52,6 @@ The workflow produces:
 *   CSV files containing alignment records with barcode and UMI information (`.records.csv`).
 *   Chromosome-specific read counts in h5ad format (`.counts.h5ad`).
 *   A single, compiled, and annotated AnnData object (`anndata.raw.h5ad`).
-
-## Rule Details
-
-Here's a more detailed description of each rule in the `core` stage:
-
-### `minimap2_index`
+*   NanoQC reports for each sample.
+*   NanoStat reports for each sample.
+*   Alignment summary statistics for each sample (`.flagstat.txt`).
