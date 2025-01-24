@@ -203,3 +203,30 @@ rule htseq_count:
             {input.annotations} -c {output}
         """
 
+
+rule compile_anndata:
+    """
+    Compiles and annotates a single AnnData object from multiple chromosome-specific h5ad files.
+
+    This rule takes a list of h5ad files (each typically representing counts for a single chromosome)
+    and a gene metadata table as input. It uses the 'compile_anndata.py' script to perform the following:
+
+    1. Concatenation: Combines the individual h5ad files into a single AnnData object.
+    2. Annotation: Merges the provided gene metadata table with the AnnData object's `var` attribute.
+    3. Gene Filtering: Removes genes that lack a 'gene_name' entry in the metadata.
+    4. Sparse Matrix Conversion: Ensures the resulting count matrix (`adata.X`) is stored as a sparse 
+       matrix (CSR format) to optimize memory usage.
+
+    The output of this rule is a single, comprehensive h5ad file containing the combined and annotated
+    count data, ready for downstream analysis.
+    """
+    input:
+        h5ad=expand(OUTPUT_PATH + "counts/{chrom}.counts.h5ad", chrom=chromosomes),
+        gene_table=OUTPUT_PATH + 'references/gene_table.tsv',
+    output:
+        OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
+    conda:
+        "pipeline-core"
+    shell:
+        """ python scripts/compile_anndata.py {output} {input.gene_table} {input.h5ad}"""
+    

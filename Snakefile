@@ -82,6 +82,7 @@ rule all:
         expand(OUTPUT_PATH + "references/by_chrom/{chrom}.gtf", chrom=chromosomes),
         expand(OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam", chrom=chromosomes),
         expand(OUTPUT_PATH + "counts/{chrom}.counts.h5ad", chrom=chromosomes),
+        OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
 
 
 
