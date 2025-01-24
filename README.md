@@ -6,6 +6,16 @@ This pipeline processes single-cell transcriptomics data generated using Oxford 
 
 The pipeline assumes that the sequencing library was prepared using 10x Genomics technology and is designed to handle the specific requirements of ONT single-cell transcriptomics data.
 
+## Cloning the Pipeline Repository
+
+To get started, first clone the pipeline repository from GitHub:
+
+    ```bash
+    git clone https://github.com/your-repo/ONT-10x-pipeline.git
+    cd ONT-10x-pipeline
+    ```
+This ensures you have the latest version of the pipeline.
+
 ## Running the Pipeline
 
 To run the pipeline, follow these steps:
@@ -17,11 +27,17 @@ To run the pipeline, follow these steps:
     *   **Core pipeline environment:** `pipeline-core.yaml`
     *   Additional specific environments for different pipeline components.
 
-    Install and activate the environments by running:
+    Install the environments by running:
 
     ```bash
-    conda env create -f workflow-env.yaml
+    conda env create -f envs/workflow-env.yaml
     conda env create -f envs/pipeline-core.yaml
+    ```
+
+    After installation, activate the top-level environment:
+
+    ```bash
+    conda activate workflow-env
     ```
 
 2.  **Prepare Configuration Files**  
@@ -31,7 +47,7 @@ To run the pipeline, follow these steps:
     Always run Snakemake using the `--use-conda` flag to ensure proper dependency management:
 
     ```bash
-    snakemake --use-conda --configfile config.yaml --cores <num_cores>
+    snakemake --use-conda --cores <num_cores>
     ```
 
     Replace `<num_cores>` with the number of threads available for computation.
