@@ -163,7 +163,7 @@ rule get_genome_build:
         """
 
 
-rule get_chroms:
+checkpoint get_chroms:
     """
     Extracts unique chromosome names from a GTF file, excluding those with ".".
 
@@ -182,8 +182,6 @@ rule get_chroms:
         cut -f 1 {input.gtf} | grep -v '^#' | sort -u | grep -v '\.' > {output.chroms}
         """
 
-""" DEFINE THE CHROMOSOMES """
-chromosomes = pu.get_names(rules.get_chroms.output[0])
 
 rule create_chromosome_gtf:
     """

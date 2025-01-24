@@ -17,6 +17,6 @@ rule longqc_ont:
         "pipeline-core"
     shell:
         """
-        longQC.py sampleqc -x ont -s {wildcards.sid} -o {output.report_dir} {input.fastq}
+        python longQC.py sampleqc -x ont -s {wildcards.sid} -o {output.report_dir} {input.fastq}
         mv {output.report_dir}/summary.txt {output.summary}
         """

@@ -12,7 +12,3 @@ dependencies:
   - seqkit 
   - blaze2
   - htseq
-  - longqc
-  - matplotlib
-  - scipy
-  - biopython
