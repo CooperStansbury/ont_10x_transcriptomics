@@ -56,7 +56,7 @@ for _, row in input_df.iterrows():
 """ RULE FILES """
 include: "rules/gather.smk"
 include: "rules/pipeline-core.smk"
-include: "rules/qc.smk"
+include: "rules/reporting.smk"
 
 
 rule all:
@@ -73,9 +73,6 @@ rule all:
         OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
         OUTPUT_PATH + 'reports/seqkit_stats/demultiplexed_fastq_report.txt',
         OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
-        # expand(OUTPUT_PATH + "qc/longqc/{sid}/summary.txt", sid=samples),
-
-
-
-
-
+        expand(OUTPUT_PATH + "reports/nanoqc/{sid}/{sid}.done", sid=samples),
+        expand(OUTPUT_PATH + "reports/nanostat/{sid}.txt", sid=samples),
+        expand(OUTPUT_PATH + "reports/alignment/{sid}.flagstat.txt", sid=samples),

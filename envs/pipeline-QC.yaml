@@ -1,0 +1,13 @@
+name: pipeline-qc
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - fastqc
+  - nanoqc
+  - nanostat
+  - pysam
+  - samtools
+  - seqkit 
+  - numpy<2.0
