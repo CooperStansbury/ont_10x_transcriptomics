@@ -4,30 +4,25 @@ This directory contains YAML configuration files for setting up Conda environmen
 
 ## Environment Overview
 
-- **`workflow-env.yaml`** – Required for executing the Snakemake pipeline.
-- **`pipeline-core.yaml`** – Contains software dependencies needed to run individual Snakemake rules.
+-   **`workflow-env.yaml`**  –  **Required:** Contains dependencies for executing the Snakemake workflow manager. This is the only environment you need to create manually.
+
+**Automatically Managed Environments (Created by Snakemake):**
+
+-   **`pipeline-core.yaml`**  – Contains core software dependencies needed for individual Snakemake rules.
+-   **`pipeline-QC.yaml`**  – Contains software dependencies needed for Snakemake quality control and reporting.
+
+**Important:** You do  **not**  need to create or activate the `pipeline-core.yaml` or `pipeline-QC.yaml` environments manually. Snakemake automatically creates and manages these environments based on their respective YAML files when you run the pipeline.
 
 ## Setup Instructions
 
-Before running the pipeline, create the necessary Conda environments:
+Before running the pipeline, you  **only need to create the `workflow-env`**:
+
 
 ```bash
-conda env create -f <env.yaml>
+conda env create -f workflow-env.yaml
 ```
-
-Replace `<env.yaml>` with the specific environment file (e.g., `workflow-env.yaml`).
 
 ## Common Conda Commands
-
-### Updating an Environment
-
-To update an existing environment based on changes in the YAML file:
-
-```bash
-conda env update --file <env.yaml> --prune
-```
-
-The `--prune` option removes unnecessary packages.
 
 ### Activating an Environment
 
@@ -39,13 +34,6 @@ conda activate <env_name>
 
 Replace `<env_name>` with the environment name specified in the YAML file.
 
-### Listing Available Environments
-
-To check available Conda environments:
-
-```bash
-conda env list
-```
 
 ## Additional Resources
 
