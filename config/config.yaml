@@ -1,6 +1,6 @@
 # general 
 threads: 36
-output_path: "/scratch/indikar_root/indikar1/shared_data/ont_10x_pipeline_test/"
+output_path: "/scratch/indikar_root/indikar1/shared_data/pipeline_test/"
 
 # input files
 inputs:

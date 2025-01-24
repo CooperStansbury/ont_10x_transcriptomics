@@ -9,7 +9,7 @@ rule minimap2_index:
     threads:
         config['threads']
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     shell:
         "minimap2 -t {threads} -d {output} {input}"
 
@@ -27,7 +27,7 @@ rule raw_report:
     threads:
         config['threads'] // 4
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     shell:
         """seqkit stats -a -b -j {threads} {input} -o {output}"""
 
@@ -55,7 +55,7 @@ rule demultiplex:
         expected=config['demux']['expected_cells'],
         output_prefix=lambda wildcards: OUTPUT_PATH + "demultiplex/" + wildcards.sid + ".", 
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     log:
         OUTPUT_PATH + "logs/demultiplex/{sid}.log",
     shell:
@@ -77,12 +77,11 @@ rule demultiplexed_report:
     threads:
         config['threads'] // 4
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     params:
         files=expand(OUTPUT_PATH + "demultiplex/{sid}.matched_reads" + extension, sid=samples),
     shell:
         """seqkit stats -a -b -j {threads} {params.files} -o {output}"""
-
 
 
 rule align_reads:
@@ -110,7 +109,7 @@ rule align_reads:
     log:
         OUTPUT_PATH + "logs/mapping/{sid}.log"
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     shell:
         """
         minimap2 {params.args} -t {threads} \
@@ -135,7 +134,7 @@ rule tag_bam:
     wildcard_constraints:
         sid='|'.join([re.escape(x) for x in set(samples)]),
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     shell:
         """python scripts/tag_bam.py {input} {output.bam} {output.records}"""
 
@@ -146,11 +145,8 @@ rule aggregate_reads_by_chromosome:
     Aggregates reads from multiple BAM files into a single BAM file for each chromosome.
 
     This rule takes a list of BAM files (typically one per sample) and merges them.
-    Then, it filters and sorts the merged reads by chromosome, producing one 
+    Then, it filters and sorts the merged reads by chromosome, producing one
     chromosome-specific, sorted BAM file, and its corresponding index.
-
-    The list of chromosomes to process is defined by the CHROMOSOMES variable
-    in the Snakefile.
     """
     input:
         bam_files=expand(OUTPUT_PATH + 'mapping/{sid}.tagged.bam', sid=samples),
@@ -158,15 +154,15 @@ rule aggregate_reads_by_chromosome:
         chrom=lambda wc: wc.chrom
     output:
         bam=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam",
-        bai=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam.bai" # Add output for index
+        bai=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam.bai"
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     threads:
         int(config['threads'])
     shell:
         """
         samtools merge -@ {threads} - {input.bam_files} | \
-        samtools view -b -@ {threads} -h - | \
+        samtools view -b -@ {threads} -h -r {params.chrom} - | \
         samtools sort -@ {threads} - -o {output.bam}
         samtools index {output.bam} {output.bai}
         """
@@ -189,7 +185,7 @@ rule htseq_count:
     output:
         OUTPUT_PATH + "counts/{chrom}.counts.h5ad"
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     params:
         d=lambda wc: int(config['counts']['umi_distance']),
         chrom=lambda wc: wc.chrom
@@ -202,6 +198,14 @@ rule htseq_count:
             {input.bam} \
             {input.annotations} -c {output}
         """
+
+
+def make_counts_output(wildcards):
+    """
+    Generates a list of chromosome-specific GTF file paths based on the output of the get_chroms checkpoint.
+    """
+    chromosomes = [line.strip() for line in open(checkpoints.get_chroms.get().output.chroms)]
+    return expand(OUTPUT_PATH + "counts/{chrom}.counts.h5ad", chrom=chromosomes)
 
 
 rule compile_anndata:
@@ -221,12 +225,12 @@ rule compile_anndata:
     count data, ready for downstream analysis.
     """
     input:
-        h5ad=expand(OUTPUT_PATH + "counts/{chrom}.counts.h5ad", chrom=chromosomes),
+        h5ad=make_counts_output,
         gene_table=OUTPUT_PATH + 'references/gene_table.tsv',
     output:
         OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
     conda:
-        "pipeline-core"
+        "../envs/pipeline-core.yaml"
     shell:
         """ python scripts/compile_anndata.py {output} {input.gene_table} {input.h5ad}"""
     
