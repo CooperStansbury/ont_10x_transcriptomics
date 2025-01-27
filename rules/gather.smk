@@ -32,15 +32,15 @@ rule get_input_list:
         OUTPUT_PATH + "config/" + INPUT_BASENAME,
     shell:
         """ cp {input} {output} """
-    
 
 
 rule get_fastq_files:
     """
-    Processes FASTQ files based on the 'merge_directories' parameter.
+    Processes FASTQ files based on the 'inputs_are_directories' parameter.
 
-    If 'merge_directories' (in config) is True, it merges FASTQ files 
-    from input directories. Otherwise, it copies individual FASTQ files. 
+    If 'inputs_are_directories' (in config) is True, it merges FASTQ files 
+    from each input directory into a single output file. 
+    Otherwise, it copies individual FASTQ files.
     """
     input:
         input_file_paths
@@ -52,18 +52,27 @@ rule get_fastq_files:
         import os
         import subprocess
         from shutil import copyfile
+        import glob
 
         if params.is_directory:
             for i, dir_path in enumerate(input):
                 out_path = output[i]
-                with open(out_path, 'w') as outfile:
-                    for filename in os.listdir(dir_path):
-                        filepath = os.path.join(dir_path, filename)
-                        subprocess.run(['cat', filepath], stdout=outfile, check=True)
+                # Use glob to get all .fastq or .fq files, adjust pattern as needed
+                fastq_files = sorted(glob.glob(os.path.join(dir_path, "*.fastq*")))
+
+                if not fastq_files:
+                    print(f"Warning: No fastq files found in directory: {dir_path}")
+                    # Create an empty file
+                    open(out_path, 'w').close()
+                    continue
+
+                # Use cat for all files (no special handling for .gz)
+                subprocess.run(f"cat {' '.join(fastq_files)} > {out_path}", shell=True, check=True)
+
         else:
             for i, in_path in enumerate(input):
                 out_path = output[i]
-                copyfile(in_path, out_path) 
+                copyfile(in_path, out_path)
 
 
 rule get_reference:
