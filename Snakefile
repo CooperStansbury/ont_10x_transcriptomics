@@ -44,8 +44,13 @@ samples = input_df['sample_id'].to_list()
 
 # get new path names
 input_file_paths = input_df['file_path'].to_list()
-output_file_paths = pu.get_output_filenames(input_df, OUTPUT_PATH)
-extension = pu.check_consistent_extensions(input_file_paths)
+
+if config['inputs']['gzipped']:
+    extension = ".gz"
+else:
+    extension = ""
+
+output_file_paths = pu.get_output_filenames(input_df, extension, OUTPUT_PATH)
 
 print(f"\n{pu.HEADER_STR} INPUT FILES {pu.HEADER_STR}")
 for _, row in input_df.iterrows():

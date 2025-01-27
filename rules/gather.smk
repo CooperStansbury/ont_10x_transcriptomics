@@ -37,21 +37,33 @@ rule get_input_list:
 
 rule get_fastq_files:
     """
-    Copies input FASTQ files to the output directory.
+    Processes FASTQ files based on the 'merge_directories' parameter.
 
-    This rule takes a list of input FASTQ file paths and copies them 
-    to the specified output paths. This is typically used to stage 
-    input data for downstream processing.
+    If 'merge_directories' (in config) is True, it merges FASTQ files 
+    from input directories. Otherwise, it copies individual FASTQ files. 
     """
     input:
         input_file_paths
     output:
         output_file_paths
+    params:
+        is_directory=config['inputs']['inputs_are_directories']
     run:
+        import os
+        import subprocess
         from shutil import copyfile
-        for i, refPath in enumerate(input):
-            outPath = output[i]
-            copyfile(refPath, outPath)
+
+        if params.is_directory:
+            for i, dir_path in enumerate(input):
+                out_path = output[i]
+                with open(out_path, 'w') as outfile:
+                    for filename in os.listdir(dir_path):
+                        filepath = os.path.join(dir_path, filename)
+                        subprocess.run(['cat', filepath], stdout=outfile, check=True)
+        else:
+            for i, in_path in enumerate(input):
+                out_path = output[i]
+                copyfile(in_path, out_path) 
 
 
 rule get_reference:

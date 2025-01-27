@@ -18,12 +18,24 @@ The `config.yaml` file includes settings for:
 -   **`threads`**: The number of threads to use for parallel execution of pipeline steps (default: 36).
 -   **`output_path`**: The main directory where pipeline outputs will be stored (default: `/scratch/indikar_root/indikar1/shared_data/ont_10x_pipeline_test/`).
 
-**Input Files:**
+## Input Files
 
--   **`inputs`**:
-    -   **`fastq_file_paths`**: Path to the `fastq_paths.txt` file, which contains a list of sample IDs and their corresponding FASTQ file paths. This file is crucial for linking sample identifiers to their sequencing data.
-    -   **`reference_fasta`**: Path to the reference genome FASTA file used for alignment (default: `/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa`).
-    -   **`reference_annotation`**: Path to the reference genome annotation GTF file used for gene quantification and other downstream analyses (default: `/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf`).
+- **`inputs`**:
+  - **`fastq_file_paths`**: Path to the `fastq_paths.txt` file, which contains a list of sample IDs and their corresponding FASTQ file paths. This file is crucial for linking sample identifiers to their sequencing data.
+  - **`inputs_are_directories`**:  **(Located in `config.yaml`)** A boolean value (`true` or `false`) that specifies whether the paths in `fastq_paths.txt` refer to individual FASTQ files or directories containing FASTQ files. 
+  - **`reference_fasta`**: Path to the reference genome FASTA file used for alignment (default: `/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa`).
+  - **`reference_annotation`**: Path to the reference genome annotation GTF file used for gene quantification and other downstream analyses (default: `/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf`).
+
+### FASTQ File Merging
+
+- **Pros:**
+  1. Merging allows the user to control the size and number of files.
+  2. Facilitates combining data from multiple sequencing runs.
+
+- **Cons:**
+  1. Automated merging assumes all files in the directory should be merged.
+  2. The directory should contain **ONLY** FASTQ files to avoid errors.
+
 
 **Demultiplexing Parameters (using `demux`):**
 
