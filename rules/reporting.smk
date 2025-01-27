@@ -3,7 +3,7 @@ rule nanoqc:
     Runs NanoQC on a FASTQ file to generate quality control reports.
     """
     input:
-        fastq=OUTPUT_PATH + "fastq/{sid}" + extension
+        fastq=OUTPUT_PATH + "fastq/{sid}.fastq" + extension
     output:
         OUTPUT_PATH + "reports/nanoqc/{sid}/{sid}.done"
     params:
@@ -22,7 +22,7 @@ rule nanostat:
     Generates sequencing statistics from a FASTQ file using NanoStat.
     """
     input:
-        fastq=OUTPUT_PATH + "fastq/{sid}" + extension
+        fastq=OUTPUT_PATH + "fastq/{sid}.fastq" + extension
     output:
         OUTPUT_PATH + "reports/nanostat/{sid}.txt"
     conda:
@@ -38,7 +38,7 @@ rule raw_report:
     Generates a summary report of key statistics for raw FASTQ files using seqkit.
     """
     input:
-        expand(OUTPUT_PATH + "fastq/{sid}" + extension, sid=samples),
+        expand(OUTPUT_PATH + "fastq/{sid}.fastq" + extension, sid=samples),
     output:
         OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
     wildcard_constraints:
@@ -67,7 +67,7 @@ rule demultiplexed_report:
     conda:
         "../envs/pipeline-QC.yaml"
     params:
-        files=expand(OUTPUT_PATH + "demultiplex/{sid}.matched_reads" + extension, sid=samples),
+        files=expand(OUTPUT_PATH + "demultiplex/{sid}.matched_reads.fastq" + extension, sid=samples),
     shell:
         """seqkit stats -a -b -j {threads} {params.files} -o {output}"""
 

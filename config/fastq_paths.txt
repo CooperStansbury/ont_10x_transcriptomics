@@ -1,3 +1,2 @@
 sample_id,file_path
-test1,/nfs/turbo/umms-indikar/shared/projects/test_fastq/test.fastq.gz
-test2,/nfs/turbo/umms-indikar/shared/projects/test_fastq/test.fastq.gz
+test1,/nfs/turbo/umms-indikar/shared/projects/test_fastq/

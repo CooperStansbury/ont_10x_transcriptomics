@@ -11,8 +11,8 @@ The pipeline assumes that the sequencing library was prepared using 10x Genomics
 To get started, first clone the pipeline repository from GitHub:
 
 ```bash
-git clone https://github.com/your-repo/ONT-10x-pipeline.git
-cd ONT-10x-pipeline
+git clone https://github.com/CooperStansbury/ont_10x_transcriptomics.git
+cd ont_10x_transcriptomics
 ```
 
 This ensures you have the latest version of the pipeline.

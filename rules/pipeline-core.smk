@@ -19,10 +19,10 @@ rule demultiplex:
     Demultiplexes FASTQ files based on cell barcodes.
     """
     input:
-        fastq=OUTPUT_PATH + "fastq/{sid}" + extension,
+        fastq=OUTPUT_PATH + "fastq/{sid}.fastq" + extension,
         whitelist=config['demux']['barcode_whitelist'],
     output:
-        OUTPUT_PATH + 'demultiplex/{sid}.matched_reads' + extension,
+        OUTPUT_PATH + 'demultiplex/{sid}.matched_reads.fastq' + extension,
         OUTPUT_PATH + 'demultiplex/{sid}.emtpy_bc_list.csv',
         OUTPUT_PATH + 'demultiplex/{sid}.knee_plot.png',
         OUTPUT_PATH + 'demultiplex/{sid}.putative_bc.csv',
@@ -63,7 +63,7 @@ rule align_reads:
     params:
         args=config['alignment']['minimap2_params'],
         mapq=config['alignment']['mapq_threshold'],
-        fastq=OUTPUT_PATH + "demultiplex/{sid}.matched_reads" + extension,
+        fastq=OUTPUT_PATH + "demultiplex/{sid}.matched_reads.fastq" + extension,
     threads:
         int(config['threads'])
     wildcard_constraints:
