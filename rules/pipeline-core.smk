@@ -195,4 +195,16 @@ rule compile_anndata:
         "../envs/pipeline-core.yaml"
     shell:
         """ python scripts/compile_anndata.py {output} {input.gene_table} {input.h5ad}"""
+
+
+rule generate_whitelist:
+    input:
+        OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
+    output:
+        OUTPUT_PATH + 'whitelist/detected_barcodes.txt'
+    conda:
+        "../envs/pipeline-core.yaml"
+    shell:
+        """ python scripts/get_whitelist.py {input} {output} """
+        
     
