@@ -198,6 +198,9 @@ rule compile_anndata:
 
 
 rule generate_whitelist:
+    """
+    Generates a whitelist of barcodes from a Scanpy object.
+    """
     input:
         OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
     output:
