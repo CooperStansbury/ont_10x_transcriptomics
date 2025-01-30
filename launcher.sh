@@ -1,5 +1,14 @@
 #!/bin/bash
 
+#SBATCH --account=<ACCOUNT>
+#SBATCH --partition=<PARTITION>
+#SBATCH --mail-user=<EMAIL>
+#SBATCH --mail-type=END,FAIL
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem=1G
+#SBATCH --time=36:00:00
+
 # Default values
 CONFIG='config/cluster'
 CORES=36

@@ -1,17 +1,17 @@
 {
     "__default__": {
-    "account_slurm": "<YOUR SLURM ACCOUNT>",
-    "partition": "<SLURM PARTITITION>",
+    "account_slurm": "<ACCOUNT>",
+    "partition": "<PARTITION",
     "jobname": "{rule}.{wildcards}",
     "nodes": 1,
     "ntasks" : 1,
     "cpus": 16,
     "mem": "10G",
     "walltime": "36:00:00",
-    "email": "<YOU EMAIL>",
+    "email": "<EMAIL>",
     "mailon": "a",
     "mail_type": "FAIL",
     "jobout": "oe",
-    "outfile": "<OUTPUT LOGGING DIRECTORY>"
+    "outfile": "<LOG_DIR>"
     }
 }
