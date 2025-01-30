@@ -1,0 +1,8 @@
+cluster: "sbatch --job-name {cluster.jobname} --account {cluster.account_slurm} --partition {cluster.partition} --mail-user {cluster.email} --mail-type {cluster.mail_type} --nodes {cluster.nodes} --ntasks {cluster.ntasks} --cpus-per-task={cluster.cpus} --mem {cluster.mem} --time {cluster.walltime} --output {cluster.outfile} "
+cluster-config: "config/cluster.json"
+conda-frontend: "mamba"
+latency-wait: 90
+cores: 36
+jobs: 4999
+immediate-submit: false
+verbose: true

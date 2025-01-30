@@ -64,11 +64,20 @@ To run the pipeline, follow these steps:
     snakemake --use-conda --cluster "sbatch --mem={resources.mem_mb}" --jobs 10
     ```
 
-## Input Requirements
-TODO
 
-## Output
-TODO
+## Output Structure
+
+This directory contains the output from a Snakemake pipeline. Here's a brief overview:
+
+*   **anndata:** Contains processed data in the AnnData format, likely ready for downstream analysis.
+*   **config:** Configuration files used for the pipeline execution.
+*   **counts:**  Contains count matrices, likely representing gene or feature expression levels.
+*   **demultiplex:**  Output related to demultiplexing, likely separating data by sample or barcode.
+*   **fastq:**  Raw or processed sequence data in FASTQ format.
+*   **logs:** Log files for various pipeline stages, including `demultiplex` and `mapping`.
+*   **mapping:**  Alignment results, potentially with detailed output in `by_chrom` for chromosome-specific information.
+*   **references:**  Reference sequences or indices used in the pipeline, possibly organized `by_chrom`.
+*   **reports:**  Summary reports, including `alignment` statistics, `nanoqc` and `nanostat` for quality control of long-read data, and `seqkit_stats` for general sequence data statistics.
 
 ## Troubleshooting
 

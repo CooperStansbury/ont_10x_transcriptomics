@@ -59,3 +59,18 @@ This file should be a tab-separated or space-separated text file with two column
 
 1.  **Sample ID:** A unique identifier for each sample.
 2.  **FASTQ File Path:** The absolute path to the corresponding FASTQ file for that sample.
+
+## SLURM Configuration
+
+To run the pipeline on a SLURM-managed cluster, you need the following configuration files:
+
+### `cluster.json`
+Defines job-specific parameters for each sub-job in the workflow, including:
+- **Logging directory** – Path for storing job logs  
+- **SLURM user account** – The user account under which jobs will run  
+- **SLURM billing account** – The account used for job billing  
+
+### `cluster/config.yaml`
+Specifies the default SLURM submission parameters for sub-jobs. This file typically does not require modification.
+
+Ensure both files are correctly configured before executing the workflow.
