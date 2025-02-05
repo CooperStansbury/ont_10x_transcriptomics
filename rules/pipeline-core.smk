@@ -154,7 +154,6 @@ rule htseq_count:
     shell:
         """
         htseq-count-barcodes \
-            --nonunique all \
             --correct-UMI-distance {params.d} \
             --counts_output_sparse \
             {input.bam} \
