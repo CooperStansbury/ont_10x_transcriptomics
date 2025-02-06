@@ -7,7 +7,7 @@ inputs:
     fastq_file_paths: "config/fastq_paths.txt"
     inputs_are_directories: true
     gzipped: true
-    reference_fasta: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.cdna.all.fa"  
+    reference_fasta: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz"  
     reference_annotation: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.107.gtf" 
 
 # demultiplexing parameters

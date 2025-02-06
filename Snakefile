@@ -73,7 +73,6 @@ rule all:
         OUTPUT_PATH + 'references/gene_table.tsv',
         OUTPUT_PATH + 'references/reference.mmi',
         OUTPUT_PATH + "references/barcode_whitelist.txt",
-        OUTPUT_PATH + 'whitelist/detected_barcodes.txt',
         output_file_paths,
         expand(OUTPUT_PATH + "demultiplex/{sid}.done", sid=samples),
         OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
@@ -82,3 +81,4 @@ rule all:
         expand(OUTPUT_PATH + "reports/nanoqc/{sid}/{sid}.done", sid=samples),
         expand(OUTPUT_PATH + "reports/nanostat/{sid}.txt", sid=samples),
         expand(OUTPUT_PATH + "reports/alignment/{sid}.flagstat.txt", sid=samples),
+        OUTPUT_PATH + 'whitelist/detected_barcodes.txt',

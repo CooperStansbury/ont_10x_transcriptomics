@@ -98,36 +98,35 @@ rule tag_bam:
     conda:
         "../envs/pipeline-core.yaml"
     shell:
-        """python scripts/tag_bam.py {input} {output.bam} {output.records}"""
-
+        """python scripts/tag_bam.py {input} {output.bam} {output.records}
+        samtools index {output.bam}
+        """
 
 
 rule aggregate_reads_by_chromosome:
     """
     Aggregates reads from multiple BAM files into a single BAM file for each chromosome.
 
-    This rule takes a list of BAM files (typically one per sample) and merges them.
-    Then, it filters and sorts the merged reads by chromosome, producing one
-    chromosome-specific, sorted BAM file, and its corresponding index.
+    This rule merges multiple BAM files and filters the merged reads by chromosome,
+    producing one chromosome-specific, sorted BAM file with its corresponding index.
     """
     input:
         bam_files=expand(OUTPUT_PATH + 'mapping/{sid}.tagged.bam', sid=samples),
     params:
-        chrom=lambda wc: wc.chrom
+        chrom=lambda wildcards: wildcards.chrom
     output:
         bam=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam",
         bai=OUTPUT_PATH + "mapping/by_chrom/{chrom}.bam.bai"
     conda:
         "../envs/pipeline-core.yaml"
     threads:
-        int(config['threads'])
+        config['threads']
     shell:
         """
-        samtools merge -@ {threads} - {input.bam_files} | \
-        samtools view -b -@ {threads} -h -r {params.chrom} - | \
-        samtools sort -@ {threads} - -o {output.bam}
-        samtools index {output.bam} {output.bai}
+        samtools merge -@ {threads} -o {output.bam} -R {params.chrom} {input.bam_files}
+        samtools index -@ {threads} {output.bam}
         """
+
 
 
 rule htseq_count:
