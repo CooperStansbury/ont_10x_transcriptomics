@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --account=<ACCOUNT>
-#SBATCH --partition=<PARTITION>
-#SBATCH --mail-user=<EMAIL>
+#SBATCH --account=indikar99
+#SBATCH --partition=standard,largemem
+#SBATCH --mail-user=cstansbu@umich.edu
 #SBATCH --mail-type=END,FAIL
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1

@@ -78,7 +78,6 @@ rule all:
         OUTPUT_PATH + "reports/seqkit_stats/raw_fastq_report.txt",
         OUTPUT_PATH + 'reports/seqkit_stats/demultiplexed_fastq_report.txt',
         OUTPUT_PATH + 'anndata/anndata.raw.h5ad',
-        expand(OUTPUT_PATH + "reports/nanoqc/{sid}/{sid}.done", sid=samples),
         expand(OUTPUT_PATH + "reports/nanostat/{sid}.txt", sid=samples),
         expand(OUTPUT_PATH + "reports/alignment/{sid}.flagstat.txt", sid=samples),
         OUTPUT_PATH + 'whitelist/detected_barcodes.txt',

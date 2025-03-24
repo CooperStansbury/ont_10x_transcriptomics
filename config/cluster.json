@@ -1,17 +1,17 @@
 {
     "__default__": {
-    "account_slurm": "<ACCOUNT>",
-    "partition": "<PARTITION>",
+    "account_slurm": "indikar99",
+    "partition": "standard,largemem",
     "jobname": "{rule}.{wildcards}",
     "nodes": 1,
     "ntasks" : 1,
-    "cpus": 1,
-    "mem": "40G",
+    "cpus": 16,
+    "mem": "100G",
     "walltime": "36:00:00",
-    "email": "<EMAIL>",
+    "email": "cstansbu@umich.edu",
     "mailon": "a",
     "mail_type": "FAIL",
     "jobout": "oe",
-    "outfile": "<LOGGING_PATH>"
+    "outfile": "/scratch/indikar_root/indikar1/cstansbu/run_logs/{rule}.{wildcards}.out"
     }
 }

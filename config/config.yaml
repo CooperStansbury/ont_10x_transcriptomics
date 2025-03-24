@@ -1,10 +1,10 @@
 # general 
 threads: 36
-output_path: "/scratch/indikar_root/indikar1/shared_data/pipeline_test/"
+output_path: "/scratch/indikar_root/indikar1/shared_data/sc_cell_cycle/"
 
 # input files
 inputs:
-    fastq_file_paths: "config/fastq_paths.txt"
+    fastq_file_paths: "config/fastq_paths_scFib.txt"
     inputs_are_directories: true
     gzipped: true
     reference_fasta: "/nfs/turbo/umms-indikar/shared/projects/HSC/data/RefGenome/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz"  

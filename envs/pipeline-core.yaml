@@ -6,7 +6,7 @@ channels:
 dependencies:
   - scanpy 
   - anndata
-  - minimap2
+  - minimap2=2.28
   - pysam
   - samtools
   - seqkit 
